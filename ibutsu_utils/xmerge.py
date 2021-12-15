@@ -1,4 +1,6 @@
+import sys
 from argparse import ArgumentParser
+from pathlib import Path
 from xml.etree import ElementTree
 
 
@@ -14,6 +16,9 @@ def merge_files(filenames):
     """Actually merge the XML files and return the merged XML"""
     main_xml = None
     for filename in filenames:
+        if not Path(filename).resolve().exists():
+            print("WARNING: {} does not exist".format(filename), file=sys.stderr)
+            break
         next_xml = ElementTree.parse(filename).getroot()
         if main_xml is None:
             main_xml = next_xml
@@ -32,6 +37,8 @@ def merge_files(filenames):
 def main():
     args = parse_args()
     output_xml = merge_files(args.input)
+    if not output_xml:
+        return
     if args.output:
         with open(args.output, "w") as outfile:
             outfile.write(output_xml)
