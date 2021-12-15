@@ -66,6 +66,9 @@ async def import_async(import_api, filename, project, metadata):
     try:
         # Start the upload
         import_file = Path(filename).resolve()
+        if not import_file.exists():
+            print("WARNING: {} does not exist".format(filename), file=sys.stderr)
+            return True, "File does not exist"
         import_ = import_api.add_import(import_file.open("rb"), project=project, metadata=metadata)
         while import_.status in ["pending", "running"]:
             # Wait for a second
@@ -92,6 +95,21 @@ async def import_and_wait(import_api, filenames, project, metadata):
     return errors
 
 
+def import_without_waiting(import_api, filenames, project, metadata):
+    """Import a list of files without waiting for their completion"""
+    errors = []
+    for filename in filenames:
+        try:
+            import_file = Path(filename).resolve()
+            if not import_file.exists():
+                print("WARNING: {} does not exist".format(filename), file=sys.stderr)
+                break
+            import_api.add_import(import_file.open("rb"), project=project, metadata=metadata)
+        except ApiException as e:
+            errors.append("Error uploading {}: {}".format(filename, str(e)))
+    return errors
+
+
 def main():
     """Run the script"""
     args = parse_args()
@@ -99,18 +117,11 @@ def main():
     import_api = get_import_api(args.host, args.api_token)
     errors = []
     if not args.wait:
-        for filename in args.input:
-            try:
-                import_file = Path(filename).resolve()
-                import_api.add_import(
-                    import_file.open("rb"), project=args.project, metadata=metadata
-                )
-            except ApiException as e:
-                errors.append("Error uploading {}: {}".format(filename, str(e)))
+        errors = import_without_waiting(import_api, args.input, args.projet, metadata)
     else:
         errors = asyncio.run(import_and_wait(import_api, args.input, args.project, metadata))
     for error in errors:
-        print(error)
+        print(error, file=sys.stderr)
     return 1 if errors else 0
 
 
