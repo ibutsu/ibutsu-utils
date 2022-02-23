@@ -117,7 +117,7 @@ def main():
     import_api = get_import_api(args.host, args.api_token)
     errors = []
     if not args.wait:
-        errors = import_without_waiting(import_api, args.input, args.projet, metadata)
+        errors = import_without_waiting(import_api, args.input, args.project, metadata)
     else:
         errors = asyncio.run(import_and_wait(import_api, args.input, args.project, metadata))
     for error in errors:
