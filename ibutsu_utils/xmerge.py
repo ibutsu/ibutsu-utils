@@ -7,7 +7,7 @@ from xml.etree import ElementTree
 def parse_args():
     """Parse command line arguments"""
     parser = ArgumentParser()
-    parser.add_argument("-o", "--output", help="Output to a file")
+    parser.add_argument("-o", "--output", help="Output to a file. Defaults to stdout without this.")
     parser.add_argument("input", nargs="+", help="Input files")
     return parser.parse_args()
 
