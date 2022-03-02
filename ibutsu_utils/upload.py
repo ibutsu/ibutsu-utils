@@ -16,14 +16,27 @@ def parse_args():
     """Parse and return the command line arguments"""
     parser = ArgumentParser(description="A tool to upload a jUnit XML or Ibutsu archive to Ibutsu")
     parser.add_argument("input", nargs="+", help="The file(s) to upload")
-    parser.add_argument("-H", "--host", required=True, help="The Ibutsu instance to upload to")
-    parser.add_argument("-p", "--project", required=True, help="The project to upload this file to")
+    parser.add_argument(
+        "-H",
+        "--host",
+        required=True,
+        help="The Ibutsu instance for uploading, e.g. https://my.ibutsu.com/api",
+    )
+    parser.add_argument("-p", "--project", required=True, help="The project for the upload")
     parser.add_argument("-t", "--api-token", help="An API token for authentication")
     parser.add_argument("-s", "--source", help="The source used in the test results")
     parser.add_argument(
-        "-m", "--metadata", action="append", help="Additional metadata to set when uploading"
+        "-m",
+        "--metadata",
+        action="append",
+        help="Additional metadata to set when uploading, in the format of dotted.key.path=value",
     )
-    parser.add_argument("-w", "--wait", action="store_true", help="Wait for the upload to complete")
+    parser.add_argument(
+        "-w",
+        "--wait",
+        action="store_true",
+        help="Wait for the upload to complete (by default this command does not wait)",
+    )
     return parser.parse_args()
 
 
