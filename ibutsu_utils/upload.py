@@ -57,6 +57,9 @@ def parse_metadata(metadata_list):
             current_data = current_data[key]
         # Finally, set the actual value
         key = keys[-1]
+        # Properly process list types
+        if ',' in value:
+            value = value.split(',')
         current_data[key] = value
     return metadata
 
