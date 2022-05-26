@@ -42,6 +42,8 @@ def parse_args():
 
 def parse_metadata(metadata_list):
     """Parse the metadata from a set of strings to a dictionary"""
+    if not metadata_list:
+        return {}
     metadata = {}
     # Loop through the list of metadata values
     for pair in metadata_list:
@@ -58,8 +60,8 @@ def parse_metadata(metadata_list):
         # Finally, set the actual value
         key = keys[-1]
         # Properly process list types
-        if ',' in value:
-            value = value.split(',')
+        if "," in value:
+            value = value.split(",")
         current_data[key] = value
     return metadata
 
@@ -77,7 +79,7 @@ def get_import_api(host, token=None):
     return ImportApi(ApiClient(config))
 
 
-async def import_async(import_api, filename, project, metadata):
+async def import_async(import_api, filename, project, source, metadata):
     """Import a file and wait for its completion"""
     try:
         # Start the upload
@@ -85,7 +87,9 @@ async def import_async(import_api, filename, project, metadata):
         if not import_file.exists():
             print("WARNING: {} does not exist".format(filename), file=sys.stderr)
             return True, "File does not exist"
-        import_ = import_api.add_import(import_file.open("rb"), project=project, metadata=metadata)
+        import_ = import_api.add_import(
+            import_file.open("rb"), project=project, source=source, metadata=metadata
+        )
         while import_.status in ["pending", "running"]:
             # Wait for a second
             await asyncio.sleep(1)
@@ -98,12 +102,14 @@ async def import_async(import_api, filename, project, metadata):
         return False, "Error uploading {}: {}".format(filename, str(e))
 
 
-async def import_and_wait(import_api, filenames, project, metadata):
+async def import_and_wait(import_api, filenames, project, source, metadata):
     """Import a list of files and wait for their completion"""
     tasks = []
     errors = []
     for filename in filenames:
-        tasks.append(asyncio.create_task(import_async(import_api, filename, project, metadata)))
+        tasks.append(
+            asyncio.create_task(import_async(import_api, filename, project, source, metadata))
+        )
     for task in tasks:
         is_success, message = await task
         if not is_success:
@@ -111,7 +117,7 @@ async def import_and_wait(import_api, filenames, project, metadata):
     return errors
 
 
-def import_without_waiting(import_api, filenames, project, metadata):
+def import_without_waiting(import_api, filenames, project, source, metadata):
     """Import a list of files without waiting for their completion"""
     errors = []
     for filename in filenames:
@@ -120,7 +126,9 @@ def import_without_waiting(import_api, filenames, project, metadata):
             if not import_file.exists():
                 print("WARNING: {} does not exist".format(filename), file=sys.stderr)
                 break
-            import_api.add_import(import_file.open("rb"), project=project, metadata=metadata)
+            import_api.add_import(
+                import_file.open("rb"), project=project, source=source, metadata=metadata
+            )
         except ApiException as e:
             errors.append("Error uploading {}: {}".format(filename, str(e)))
     return errors
@@ -133,9 +141,11 @@ def main():
     import_api = get_import_api(args.host, args.api_token)
     errors = []
     if not args.wait:
-        errors = import_without_waiting(import_api, args.input, args.project, metadata)
+        errors = import_without_waiting(import_api, args.input, args.project, args.source, metadata)
     else:
-        errors = asyncio.run(import_and_wait(import_api, args.input, args.project, metadata))
+        errors = asyncio.run(
+            import_and_wait(import_api, args.input, args.project, args.source, metadata)
+        )
     for error in errors:
         print(error, file=sys.stderr)
     return 1 if errors else 0
