@@ -1,6 +1,50 @@
 [build-system]
-requires = ["setuptools>=42", "wheel", "setuptools_scm>=6.2"]
-build-backend = "setuptools.build_meta"
+requires = [
+    "hatchling>=1.3.0",
+    "hatch-vcs",
+]
+build-backend = "hatchling.build"
 
-[tool.setuptools_scm]
-# Enable setuptools_scm
+[project]
+name = "ibutsu-utils"
+description = "Some command line utilities for Ibutsu"
+readme = "README.rst"
+license = ""
+requires-python = ">=3.6"
+authors = [
+    { name = "Raoul Snyman", email = "rsnyman@redhat.com" },
+]
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+]
+dependencies = [
+    "ibutsu-client>=2.2.2",
+]
+dynamic = [
+    "version",
+]
+
+[project.scripts]
+ibutsu-upload = "ibutsu_utils.upload:main"
+ibutsu-xmerge = "ibutsu_utils.xmerge:main"
+
+[project.urls]
+"Bug Tracker" = "https://github.com/ibutsu/ibutsu-utils/issues"
+Homepage = "https://ibutsu-project.org/"
+Source = "https://github.com/ibutsu/ibutsu-utils"
+
+[tool.hatch.version]
+source = "vcs"
+
+[tool.hatch.build.hooks.vcs]
+version-file = "ibutsu_utils/_version.py"
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/ibutsu_utils",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["ibutsu_utils"]
