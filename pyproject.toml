@@ -38,9 +38,6 @@ Source = "https://github.com/ibutsu/ibutsu-utils"
 [tool.hatch.version]
 source = "vcs"
 
-[tool.hatch.build.hooks.vcs]
-version-file = "ibutsu_utils/_version.py"
-
 [tool.hatch.build.targets.sdist]
 include = [
     "/ibutsu_utils",
