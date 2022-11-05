@@ -27,6 +27,7 @@ dynamic = [
 ]
 
 [project.scripts]
+ibutsu-download = "ibutsu_utils.download:main"
 ibutsu-upload = "ibutsu_utils.upload:main"
 ibutsu-xmerge = "ibutsu_utils.xmerge:main"
 
