@@ -13,6 +13,7 @@ Ibutsu Utilities
 Some command line utilities for `Ibutsu <https://ibutsu-project.org/>`_. There are currently two
 tools:
 
+- `Download artifacts - ibutsu-download <#download-tool>`_
 - `Upload test runs - ibutsu-upload <#upload-tool>`_
 - `Combine JUnit XML files - ibutsu-xmerge <#combine-tool>`_
 
@@ -24,6 +25,28 @@ These utilities are available on `PyPI <https://pypi.org/ibutsu-utils>`_ and can
 
    $ pip install ibutsu-utils
 
+Download Tool
+-------------
+
+The ``ibutsu-download`` command line tool downloads an artifact from Ibutsu.
+
+.. code-block::
+
+   $ ibutsu-download -h
+   usage: ibutsu-download [-h] -H HOST [-t API_TOKEN] [-o OUTPUT] artifact_id
+
+   A tool to download an artifact from an Ibutsu server
+
+   positional arguments:
+     artifact_id           The ID of the artifact to download
+
+   options:
+     -h, --help            show this help message and exit
+     -H HOST, --host HOST  The Ibutsu instance for uploading, e.g. https://my.ibutsu.com/api
+     -t API_TOKEN, --api-token API_TOKEN
+                           An API token for authentication
+     -o OUTPUT, --output OUTPUT
+                           The destination to save the file. If omitted will use the current directory and the artifact file name
 
 Upload Tool
 -----------
@@ -52,7 +75,6 @@ The ``ibutsu-upload`` command line tool uploads JUnit XML or Ibutsu archives to 
      -m METADATA, --metadata METADATA
                            Additional metadata to set when uploading, in the format of dotted.key.path=value
      -w, --wait            Wait for the upload to complete (by default this command does not wait)
-
 
 Combine Tool
 ------------
