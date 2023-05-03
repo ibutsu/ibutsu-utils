@@ -30,6 +30,9 @@ Download Tool
 
 The ``ibutsu-download`` command line tool downloads an artifact from Ibutsu.
 
+Usage
+~~~~~
+
 .. code-block::
 
    $ ibutsu-download -h
@@ -48,10 +51,20 @@ The ``ibutsu-download`` command line tool downloads an artifact from Ibutsu.
      -o OUTPUT, --output OUTPUT
                            The destination to save the file. If omitted will use the current directory and the artifact file name
 
+Example
+~~~~~~~
+
+.. code-block::
+
+   $ ibutsu-download --host https://my.ibutsu.com/api --token AwEdE...4GyT --output errors.log ea8550e2-7eeb-4b4e-8a31-92d8a3e1169c
+
 Upload Tool
 -----------
 
 The ``ibutsu-upload`` command line tool uploads JUnit XML or Ibutsu archives to Ibutsu.
+
+Usage
+~~~~~
 
 .. code-block::
 
@@ -76,11 +89,42 @@ The ``ibutsu-upload`` command line tool uploads JUnit XML or Ibutsu archives to 
                            Additional metadata to set when uploading, in the format of dotted.key.path=value
      -w, --wait            Wait for the upload to complete (by default this command does not wait)
 
+Example
+~~~~~~~
+
+.. code-block::
+
+   $ ibutsu-upload --host https://my.ibutsu.com/api --token AwEdE...4GyT --project ibutsu-server --source jenkins-run-tests-53 --metadata component=frontend --metadata env=prod --metadata durations.call=34.405 --metadata durations.setup=0.0005 --metadata durations.teardown=0.689 --metadata markers=core,smoke,frontend --wait 550aed75-b214-4d17-983d-fe0829311b98.tar.gz
+
+The above ``--metadata`` arguments will populate the ``metadata`` field in the run object:
+
+.. code-block:: json
+
+   {
+     "metadata": {
+       "component": "frontend",
+       "env": "prod",
+       "durations": {
+         "call": 34.405,
+         "setup": 0.0005,
+         "teardown": 0.689
+       },
+       "markers": [
+         "core",
+         "smoke",
+         "frontend"
+       ]
+     },
+   }
+
 Combine Tool
 ------------
 
 Some test runners output multiple JUnit XML files for a single test run. The ``ibutsu-xmerge``
 utility will combine multiple XML files into a single file.
+
+Usage
+~~~~~
 
 .. code-block::
 
@@ -94,3 +138,10 @@ utility will combine multiple XML files into a single file.
      -h, --help            show this help message and exit
      -o OUTPUT, --output OUTPUT
                            Output to a file. Defaults to stdout without this.
+
+Example
+~~~~~~~
+
+.. code-block::
+
+   $ ibutsu-xmerge --output ../merged.xml *.xml
