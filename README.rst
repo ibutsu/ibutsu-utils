@@ -10,7 +10,7 @@
 Ibutsu Utilities
 ================
 
-Some command line utilities for `Ibutsu <https://ibutsu-project.org/>`_. There are currently two
+Some command line utilities for `Ibutsu <https://ibutsu-project.org/>`_. There are currently three
 tools:
 
 - `Download artifacts - ibutsu-download <#download-tool>`_
@@ -24,6 +24,21 @@ These utilities are available on `PyPI <https://pypi.org/ibutsu-utils>`_ and can
 ``pip``::
 
    $ pip install ibutsu-utils
+
+Authentication
+--------------
+
+An API token can be provided in two ways:
+
+1. Via the ``-t`` / ``--api-token`` command line option.
+2. Via the ``IBUTSU_TOKEN`` environment variable.
+
+If both are set, the command line option takes precedence.
+
+.. code-block:: bash
+
+   $ export IBUTSU_TOKEN="AwEdE...4GyT"
+   $ ibutsu-upload -H https://my.ibutsu.com/api -p my-project results.xml
 
 Download Tool
 -------------
@@ -47,7 +62,7 @@ Usage
      -h, --help            show this help message and exit
      -H HOST, --host HOST  The Ibutsu instance for uploading, e.g. https://my.ibutsu.com/api
      -t API_TOKEN, --api-token API_TOKEN
-                           An API token for authentication
+                           An API token for authentication (can also be set via IBUTSU_TOKEN env var)
      -o OUTPUT, --output OUTPUT
                            The destination to save the file. If omitted will use the current directory and the artifact file name
 
@@ -56,7 +71,7 @@ Example
 
 .. code-block::
 
-   $ ibutsu-download --host https://my.ibutsu.com/api --token AwEdE...4GyT --output errors.log ea8550e2-7eeb-4b4e-8a31-92d8a3e1169c
+   $ ibutsu-download --host https://my.ibutsu.com/api --api-token AwEdE...4GyT --output errors.log ea8550e2-7eeb-4b4e-8a31-92d8a3e1169c
 
 Upload Tool
 -----------
@@ -82,7 +97,7 @@ Usage
      -p PROJECT, --project PROJECT
                            The project for the upload
      -t API_TOKEN, --api-token API_TOKEN
-                           An API token for authentication
+                           An API token for authentication (can also be set via IBUTSU_TOKEN env var)
      -s SOURCE, --source SOURCE
                            The source used in the test results
      -m METADATA, --metadata METADATA
@@ -94,7 +109,7 @@ Example
 
 .. code-block::
 
-   $ ibutsu-upload --host https://my.ibutsu.com/api --token AwEdE...4GyT --project ibutsu-server --source jenkins-run-tests-53 --metadata component=frontend --metadata env=prod --metadata durations.call=34.405 --metadata durations.setup=0.0005 --metadata durations.teardown=0.689 --metadata markers=core,smoke,frontend --wait 550aed75-b214-4d17-983d-fe0829311b98.tar.gz
+   $ ibutsu-upload --host https://my.ibutsu.com/api --api-token AwEdE...4GyT --project ibutsu-server --source jenkins-run-tests-53 --metadata component=frontend --metadata env=prod --metadata durations.call=34.405 --metadata durations.setup=0.0005 --metadata durations.teardown=0.689 --metadata markers=core,smoke,frontend --wait 550aed75-b214-4d17-983d-fe0829311b98.tar.gz
 
 The above ``--metadata`` arguments will populate the ``metadata`` field in the run object:
 

@@ -8,6 +8,7 @@ from ibutsu_client import ApiClient, ApiException, Configuration
 from ibutsu_client.api.import_api import ImportApi
 
 CA_BUNDLE_ENVS = ["REQUESTS_CA_BUNDLE", "IBUTSU_CA_BUNDLE"]
+TOKEN_ENV_VAR = "IBUTSU_TOKEN"
 
 
 def parse_args():
@@ -21,7 +22,11 @@ def parse_args():
         help="The Ibutsu instance for uploading, e.g. https://my.ibutsu.com/api",
     )
     parser.add_argument("-p", "--project", required=True, help="The project for the upload")
-    parser.add_argument("-t", "--api-token", help="An API token for authentication")
+    parser.add_argument(
+        "-t",
+        "--api-token",
+        help=f"An API token for authentication (can also be set via {TOKEN_ENV_VAR} env var)",
+    )
     parser.add_argument("-s", "--source", help="The source used in the test results")
     parser.add_argument(
         "-m",
@@ -136,7 +141,8 @@ def main():
     """Run the script"""
     args = parse_args()
     metadata = parse_metadata(args.metadata)
-    import_api = get_import_api(args.host, args.api_token)
+    token = args.api_token or os.getenv(TOKEN_ENV_VAR)
+    import_api = get_import_api(args.host, token)
     errors = []
     if not args.wait:
         errors = import_without_waiting(import_api, args.input, args.project, args.source, metadata)
