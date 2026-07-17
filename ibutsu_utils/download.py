@@ -8,6 +8,7 @@ from ibutsu_client import ApiClient, ApiException, Configuration
 from ibutsu_client.api.artifact_api import ArtifactApi
 
 CA_BUNDLE_ENVS = ["REQUESTS_CA_BUNDLE", "IBUTSU_CA_BUNDLE"]
+TOKEN_ENV_VAR = "IBUTSU_TOKEN"
 
 
 def parse_args() -> Namespace:
@@ -20,7 +21,11 @@ def parse_args() -> Namespace:
         required=True,
         help="The Ibutsu instance for uploading, e.g. https://my.ibutsu.com/api",
     )
-    parser.add_argument("-t", "--api-token", help="An API token for authentication")
+    parser.add_argument(
+        "-t",
+        "--api-token",
+        help=f"An API token for authentication (can also be set via {TOKEN_ENV_VAR} env var)",
+    )
     parser.add_argument(
         "-o",
         "--output",
@@ -80,7 +85,8 @@ def download_artifact(
 def main():
     """Run the script"""
     args = parse_args()
-    artifact_api = get_artifact_api(args.host, args.api_token)
+    token = args.api_token or os.getenv(TOKEN_ENV_VAR)
+    artifact_api = get_artifact_api(args.host, token)
     output = Path(args.output) if args.output else Path(".")
     if not output.parent.exists():
         print(f'Error: Path "{output.parent}" does not exist')
