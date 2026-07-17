@@ -1,16 +1,10 @@
 import json
 import os
 import sys
-from argparse import ArgumentParser
-from argparse import Namespace
+from argparse import ArgumentParser, Namespace
 from pathlib import Path
-from typing import Optional
-from typing import Tuple
-from typing import Union
 
-from ibutsu_client import ApiClient
-from ibutsu_client import ApiException
-from ibutsu_client import Configuration
+from ibutsu_client import ApiClient, ApiException, Configuration
 from ibutsu_client.api.artifact_api import ArtifactApi
 
 CA_BUNDLE_ENVS = ["REQUESTS_CA_BUNDLE", "IBUTSU_CA_BUNDLE"]
@@ -36,7 +30,7 @@ def parse_args() -> Namespace:
     return parser.parse_args()
 
 
-def get_artifact_api(host: str, token: Optional[str] = None) -> ArtifactApi:
+def get_artifact_api(host: str, token: str | None = None) -> ArtifactApi:
     """Set up an API client that can connect to Ibutsu, then set up and return the Artifact API"""
     config = Configuration(access_token=token)
     config.host = host
@@ -55,10 +49,7 @@ def get_api_error(api_exception: ApiException) -> str:
     if api_exception.body:
         try:
             data = json.loads(api_exception.body)
-            if isinstance(data, dict):
-                error = data["detail"]
-            else:
-                error = data
+            error = data["detail"] if isinstance(data, dict) else data
         except Exception:
             error = api_exception.body
     if not error:
@@ -68,7 +59,7 @@ def get_api_error(api_exception: ApiException) -> str:
 
 def download_artifact(
     artifact_api: ArtifactApi, artifact_id: str, destination: Path
-) -> Tuple[bool, Union[str, None]]:
+) -> tuple[bool, str | None]:
     """Download an artifact from Ibutsu"""
     try:
         print("Downloading...")
