@@ -1,34 +1,14 @@
-exclude: iqe/data/plugin_skel
 repos:
-- repo: https://github.com/asottile/reorder_python_imports
-  rev: v3.1.0
+- repo: https://github.com/astral-sh/ruff-pre-commit
+  rev: v0.15.22
   hooks:
-  - id: reorder-python-imports
-    language_version: python3
-- repo: https://github.com/ambv/black
-  rev: 22.3.0
-  hooks:
-  - id: black
-    args: [--safe, --quiet, --line-length, "100"]
-    language_version: python3
-    require_serial: true
+    - id: ruff-check
+      args: [--fix]
+    - id: ruff-format
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v2.0.0
+  rev: v6.0.0
   hooks:
   - id: trailing-whitespace
-    language_version: python3
   - id: end-of-file-fixer
-    language_version: python3
   - id: check-yaml
-    language_version: python3
   - id: debug-statements
-    language_version: python3
-- repo: https://github.com/asottile/pyupgrade
-  rev: v2.32.1
-  hooks:
-  - id: pyupgrade
-    language_version: python3
-- repo: https://github.com/PyCQA/flake8
-  rev: 4.0.1
-  hooks:
-  - id: flake8

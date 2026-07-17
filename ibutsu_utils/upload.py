@@ -4,9 +4,7 @@ import sys
 from argparse import ArgumentParser
 from pathlib import Path
 
-from ibutsu_client import ApiClient
-from ibutsu_client import ApiException
-from ibutsu_client import Configuration
+from ibutsu_client import ApiClient, ApiException, Configuration
 from ibutsu_client.api.import_api import ImportApi
 
 CA_BUNDLE_ENVS = ["REQUESTS_CA_BUNDLE", "IBUTSU_CA_BUNDLE"]
@@ -85,7 +83,7 @@ async def import_async(import_api, filename, project, source, metadata):
         # Start the upload
         import_file = Path(filename).resolve()
         if not import_file.exists():
-            print("WARNING: {} does not exist".format(filename), file=sys.stderr)
+            print(f"WARNING: {filename} does not exist", file=sys.stderr)
             return True, "File does not exist"
         import_ = import_api.add_import(
             import_file.open("rb"), project=project, source=source, metadata=metadata
@@ -95,11 +93,11 @@ async def import_async(import_api, filename, project, source, metadata):
             await asyncio.sleep(1)
             import_ = import_api.get_import(import_.id)
         if import_.status != "done":
-            return False, "Error importing {}".format(filename)
+            return False, f"Error importing {filename}"
         else:
             return True, import_
     except ApiException as e:
-        return False, "Error uploading {}: {}".format(filename, str(e))
+        return False, f"Error uploading {filename}: {e}"
 
 
 async def import_and_wait(import_api, filenames, project, source, metadata):
@@ -124,13 +122,13 @@ def import_without_waiting(import_api, filenames, project, source, metadata):
         try:
             import_file = Path(filename).resolve()
             if not import_file.exists():
-                print("WARNING: {} does not exist".format(filename), file=sys.stderr)
+                print(f"WARNING: {filename} does not exist", file=sys.stderr)
                 break
             import_api.add_import(
                 import_file.open("rb"), project=project, source=source, metadata=metadata
             )
         except ApiException as e:
-            errors.append("Error uploading {}: {}".format(filename, str(e)))
+            errors.append(f"Error uploading {filename}: {e}")
     return errors
 
 

@@ -17,7 +17,7 @@ def merge_files(filenames):
     main_xml = None
     for filename in filenames:
         if not Path(filename).resolve().exists():
-            print("WARNING: {} does not exist".format(filename), file=sys.stderr)
+            print(f"WARNING: {filename} does not exist", file=sys.stderr)
             break
         next_xml = ElementTree.parse(filename).getroot()
         if main_xml is None:
@@ -25,7 +25,7 @@ def merge_files(filenames):
         else:
             main_xml.extend(next_xml)
             for key, value in next_xml.items():
-                if type(value) in [int, float]:
+                if isinstance(value, (int, float)):
                     updated_value = main_xml.attrib.get(key, 0) + value
                 else:
                     updated_value = value
